@@ -1,13 +1,14 @@
-﻿import { FormEvent, KeyboardEvent } from "react";
+﻿import { FormEvent, KeyboardEvent, RefObject } from "react";
 
 type MessageInputProps = {
-  disabled: boolean;
+  inputRef: RefObject<HTMLTextAreaElement | null>;
+  isLoading: boolean;
   onChange: (value: string) => void;
   onSubmit: (event?: FormEvent<HTMLFormElement>) => void;
   value: string;
 };
 
-export function MessageInput({ disabled, onChange, onSubmit, value }: MessageInputProps) {
+export function MessageInput({ inputRef, isLoading, onChange, onSubmit, value }: MessageInputProps) {
   function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
@@ -20,21 +21,19 @@ export function MessageInput({ disabled, onChange, onSubmit, value }: MessageInp
       <label className="sr-only" htmlFor="message">
         Escribe tu pregunta
       </label>
-      <div className="composer-field">
-        <textarea
-          id="message"
-          name="message"
-          placeholder="Pregunta algo sobre Land..."
-          rows={1}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          onKeyDown={handleKeyDown}
-          disabled={disabled}
-        />
-        <span className="composer-hint">Enter para enviar, Shift+Enter para salto de linea</span>
-      </div>
-      <button aria-label="Enviar mensaje" disabled={disabled || !value.trim()} type="submit">
-        <span className="send-icon">↑</span>
+      <textarea
+        id="message"
+        name="message"
+        placeholder="Escribe un mensaje..."
+        rows={1}
+        ref={inputRef}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        onKeyDown={handleKeyDown}
+        aria-busy={isLoading}
+      />
+      <button aria-label="Enviar mensaje" disabled={!value.trim() || isLoading} type="submit">
+        <span className="send-icon">↗</span>
       </button>
     </form>
   );

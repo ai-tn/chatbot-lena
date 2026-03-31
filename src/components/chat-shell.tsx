@@ -25,9 +25,11 @@ export function ChatShell() {
   const [error, setError] = useState<string | null>(null);
   const sessionIdRef = useRef<string>("session-pending");
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     sessionIdRef.current = getOrCreateSessionId();
+    inputRef.current?.focus();
   }, []);
 
   useEffect(() => {
@@ -81,6 +83,9 @@ export function ChatShell() {
       setError(extractErrorMessage(submissionError));
     } finally {
       setIsLoading(false);
+      requestAnimationFrame(() => {
+        inputRef.current?.focus();
+      });
     }
   }
 
@@ -93,13 +98,10 @@ export function ChatShell() {
               <span>L</span>
             </div>
             <div>
-              <p className="eyebrow">Chat with</p>
               <h1>Lena&apos;s Chat</h1>
+              <p className="online-status">En linea ahora</p>
             </div>
           </div>
-          <button className="menu-button" type="button" aria-label="Opciones">
-            •••
-          </button>
         </header>
 
         <StatusBanner error={error} isLoading={isLoading} />
@@ -110,7 +112,8 @@ export function ChatShell() {
         </div>
 
         <MessageInput
-          disabled={isLoading}
+          inputRef={inputRef}
+          isLoading={isLoading}
           onChange={setInput}
           onSubmit={handleSubmit}
           value={input}
