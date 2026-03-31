@@ -24,10 +24,15 @@ export function ChatShell() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const sessionIdRef = useRef<string>("session-pending");
+  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     sessionIdRef.current = getOrCreateSessionId();
   }, []);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [messages, isLoading]);
 
   async function handleSubmit(event?: FormEvent<HTMLFormElement>) {
     event?.preventDefault();
@@ -81,26 +86,44 @@ export function ChatShell() {
 
   return (
     <main className="chat-app-shell">
-      <section className="chat-panel">
-        <header className="chat-header">
-          <div>
-            <p className="eyebrow">TwoNav Support</p>
-            <h1>Chat Land Assistant</h1>
-            <p className="subtle-copy">
-              Una web-app ligera para hablar con el chatbot RAG de soporte sobre Land.
-            </p>
-          </div>
-          <div className="status-chip">Conectado a Make</div>
-        </header>
+      <section className="device-frame">
+        <div className="device-glow" />
+        <section className="chat-panel">
+          <header className="chat-header">
+            <div className="app-badge-row">
+              <div className="app-badge">TN</div>
+              <div>
+                <p className="eyebrow">TwoNav Support</p>
+                <h1>Chat Land Assistant</h1>
+              </div>
+            </div>
+            <div className="header-actions">
+              <div className="status-chip">Conectado a Make</div>
+              <div className="platform-pill">Web app</div>
+            </div>
+          </header>
 
-        <StatusBanner error={error} isLoading={isLoading} />
-        <MessageList isLoading={isLoading} messages={messages} />
-        <MessageInput
-          disabled={isLoading}
-          onChange={setInput}
-          onSubmit={handleSubmit}
-          value={input}
-        />
+          <StatusBanner error={error} isLoading={isLoading} />
+
+          <div className="chat-surface">
+            <div className="chat-intro-card">
+              <p className="intro-kicker">Asistente</p>
+              <p className="intro-text">
+                Resuelve dudas sobre Land, explica acciones paso a paso y comparte ayuda relevante cuando realmente aporta valor.
+              </p>
+            </div>
+
+            <MessageList isLoading={isLoading} messages={messages} />
+            <div ref={scrollRef} />
+          </div>
+
+          <MessageInput
+            disabled={isLoading}
+            onChange={setInput}
+            onSubmit={handleSubmit}
+            value={input}
+          />
+        </section>
       </section>
     </main>
   );
