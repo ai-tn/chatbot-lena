@@ -1,4 +1,4 @@
-﻿# CHATBOT Web App
+# CHATBOT Web App
 
 Frontend MVP con look and feel de app para el chatbot de soporte de Land.
 
