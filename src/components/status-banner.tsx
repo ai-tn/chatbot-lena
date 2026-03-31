@@ -9,8 +9,8 @@ export function StatusBanner({ error, isLoading }: StatusBannerProps) {
   }
 
   if (isLoading) {
-    return <div className="status-banner loading">El asistente esta preparando la respuesta...</div>;
+    return <div className="status-banner loading">Lena esta escribiendo...</div>;
   }
 
-  return <div className="status-banner ready">Puedes probar preguntas reales del flujo de soporte de Land.</div>;
+  return null;
 }

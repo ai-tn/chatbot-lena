@@ -14,7 +14,7 @@ const INITIAL_MESSAGES: ChatMessage[] = [
     id: "assistant-welcome",
     role: "assistant",
     content:
-      "Soy el asistente de soporte de TwoNav para Land. Puedo ayudarte a resolver dudas, explicar acciones paso a paso y compartir articulos utiles cuando aporte valor.",
+      "Hola. Soy Lena y puedo ayudarte con dudas sobre Land, explicar acciones paso a paso y compartir articulos utiles cuando realmente aporten valor.",
   },
 ];
 
@@ -86,44 +86,35 @@ export function ChatShell() {
 
   return (
     <main className="chat-app-shell">
-      <section className="device-frame">
-        <div className="device-glow" />
-        <section className="chat-panel">
-          <header className="chat-header">
-            <div className="app-badge-row">
-              <div className="app-badge">TN</div>
-              <div>
-                <p className="eyebrow">TwoNav Support</p>
-                <h1>Chat Land Assistant</h1>
-              </div>
+      <section className="chat-panel">
+        <header className="chat-header">
+          <div className="brand-block">
+            <div className="avatar-placeholder" aria-hidden="true">
+              <span>L</span>
             </div>
-            <div className="header-actions">
-              <div className="status-chip">Conectado a Make</div>
-              <div className="platform-pill">Web app</div>
+            <div>
+              <p className="eyebrow">Chat with</p>
+              <h1>Lena&apos;s Chat</h1>
             </div>
-          </header>
-
-          <StatusBanner error={error} isLoading={isLoading} />
-
-          <div className="chat-surface">
-            <div className="chat-intro-card">
-              <p className="intro-kicker">Asistente</p>
-              <p className="intro-text">
-                Resuelve dudas sobre Land, explica acciones paso a paso y comparte ayuda relevante cuando realmente aporta valor.
-              </p>
-            </div>
-
-            <MessageList isLoading={isLoading} messages={messages} />
-            <div ref={scrollRef} />
           </div>
+          <button className="menu-button" type="button" aria-label="Opciones">
+            •••
+          </button>
+        </header>
 
-          <MessageInput
-            disabled={isLoading}
-            onChange={setInput}
-            onSubmit={handleSubmit}
-            value={input}
-          />
-        </section>
+        <StatusBanner error={error} isLoading={isLoading} />
+
+        <div className="chat-surface">
+          <MessageList isLoading={isLoading} messages={messages} />
+          <div ref={scrollRef} />
+        </div>
+
+        <MessageInput
+          disabled={isLoading}
+          onChange={setInput}
+          onSubmit={handleSubmit}
+          value={input}
+        />
       </section>
     </main>
   );
