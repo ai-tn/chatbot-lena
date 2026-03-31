@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 
@@ -23,9 +23,11 @@ export function ChatShell() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [copyStatus, setCopyStatus] = useState<string | null>(null);
   const sessionIdRef = useRef<string>("session-pending");
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
+  const copyStatusTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     sessionIdRef.current = getOrCreateSessionId();
@@ -35,6 +37,14 @@ export function ChatShell() {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages, isLoading]);
+
+  useEffect(() => {
+    return () => {
+      if (copyStatusTimeoutRef.current !== null) {
+        window.clearTimeout(copyStatusTimeoutRef.current);
+      }
+    };
+  }, []);
 
   async function handleSubmit(event?: FormEvent<HTMLFormElement>) {
     event?.preventDefault();
@@ -89,6 +99,24 @@ export function ChatShell() {
     }
   }
 
+  async function handleCopyConversation() {
+    try {
+      await navigator.clipboard.writeText(formatConversation(messages));
+      setCopyStatus("Conversacion copiada");
+    } catch {
+      setCopyStatus("No se pudo copiar la conversacion");
+    }
+
+    if (copyStatusTimeoutRef.current !== null) {
+      window.clearTimeout(copyStatusTimeoutRef.current);
+    }
+
+    copyStatusTimeoutRef.current = window.setTimeout(() => {
+      setCopyStatus(null);
+      copyStatusTimeoutRef.current = null;
+    }, 2400);
+  }
+
   return (
     <main className="chat-app-shell">
       <section className="chat-panel">
@@ -101,6 +129,12 @@ export function ChatShell() {
               <h1>Lena&apos;s Chat</h1>
               <p className="online-status">En linea ahora</p>
             </div>
+          </div>
+          <div className="header-actions">
+            <button className="copy-chat-button" onClick={handleCopyConversation} type="button">
+              Copiar chat
+            </button>
+            {copyStatus ? <p className="copy-chat-status">{copyStatus}</p> : null}
           </div>
         </header>
 
@@ -121,4 +155,13 @@ export function ChatShell() {
       </section>
     </main>
   );
+}
+
+function formatConversation(messages: ChatMessage[]) {
+  return messages
+    .map((message) => {
+      const role = message.role === "assistant" ? "Lena" : "Usuario";
+      return `${role}:\n${message.content.trim()}`;
+    })
+    .join("\n\n");
 }
